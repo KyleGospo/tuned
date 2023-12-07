@@ -87,6 +87,11 @@ ROLLBACK_FULL = 2
 PREFIX_PROFILE_FACTORY = "System"
 PREFIX_PROFILE_USER = "User"
 
+# PPD-to-tuned API translation daemon configuration
+PPD_DBUS_BUS = "net.hadess.PowerProfiles"
+PPD_DBUS_OBJECT = "/net/hadess/PowerProfiles"
+PPD_DBUS_INTERFACE = PPD_DBUS_BUS
+
 # After adding new option to tuned-main.conf add here its name with CFG_ prefix
 # and eventually default value with CFG_DEF_ prefix (default is None)
 # and function for check with CFG_FUNC_ prefix
