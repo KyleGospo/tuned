@@ -130,7 +130,7 @@ class DBusExporter(interfaces.ExporterInterface):
 			raise Exception("Method with this name is already exported.")
 
 		def wrapper(owner, *args, **kwargs):
-			action_id = consts.NAMESPACE + "." + method.__name__
+			action_id = self.bus_name + "." + method.__name__
 			caller = args[-1]
 			log.debug("checking authorization for action '%s' requested by caller '%s'" % (action_id, caller))
 			ret = self._polkit.check_authorization(caller, action_id)
