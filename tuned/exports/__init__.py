@@ -17,6 +17,20 @@ def signal(*args, **kwargs):
 		return method
 	return wrapper
 
+def set_property(*args, **kwargs):
+	"""Decorator, use to mark setters of exportable properties."""
+	def wrapper(method):
+		method.property_set_params = [ args, kwargs ]
+		return method
+	return wrapper
+
+def get_property(*args, **kwargs):
+	"""Decorator, use to mark getters of exportable properties."""
+	def wrapper(method):
+		method.property_get_params = [ args, kwargs ]
+		return method
+	return wrapper
+
 def register_exporter(instance):
 	if not isinstance(instance, interfaces.ExporterInterface):
 		raise Exception()
