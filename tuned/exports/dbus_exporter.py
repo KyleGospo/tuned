@@ -12,6 +12,7 @@ from inspect import ismethod
 from tuned.utils.polkit import polkit
 from gi.repository import GLib
 from types import FunctionType
+from dbus import PROPERTIES_IFACE
 from dbus.exceptions import DBusException
 from dbus.lowlevel import ErrorMessage
 
@@ -86,11 +87,58 @@ class DBusExporter(interfaces.ExporterInterface):
 		self._bus_object = None
 		self._polkit = polkit()
 
+		self._property_setters = {}
+		self._property_getters = {}
+		self._init_property_interface()
+
 		# dirty hack that fixes KeyboardInterrupt handling
 		# the hack is needed because PyGObject / GTK+-3 developers are morons
 		signal_handler = signal.getsignal(signal.SIGINT)
 		self._main_loop = GLib.MainLoop()
 		signal.signal(signal.SIGINT, signal_handler)
+
+	def _init_property_interface(self):
+		def Get(_, interface_name, property_name):
+			if interface_name != self._interface_name:
+				raise dbus.exceptions.DBusException("Unknown interface: %s" % interface_name)
+			if property_name not in self._property_getters:
+				raise dbus.exceptions.DBusException("No such property: %s" % property_name)
+			getter = self._property_getters[property_name]
+			return getter()
+
+		def Set(_, interface_name, property_name, value):
+			if interface_name != self._interface_name:
+				raise dbus.exceptions.DBusException("Unknown interface: %s" % interface_name)
+			if property_name not in self._property_setters:
+				raise dbus.exceptions.DBusException("No such property: %s" % property_name)
+			setter = self._property_setters[property_name]
+			setter(value)
+
+		def GetAll(_, interface_name):
+			if interface_name != self._interface_name:
+				raise dbus.exceptions.DBusException("Unknown interface: %s" % interface_name)
+			return {name: self._property_getters[name]() for name in self._property_getters}
+
+		self._dbus_methods["Get"] = dbus.service.method(
+			dbus.PROPERTIES_IFACE, in_signature='ss', out_signature='v')(Get)
+		self._dbus_methods["Set"] = dbus.service.method(
+			dbus.PROPERTIES_IFACE, in_signature='ssv')(Set)
+		self._dbus_methods["GetAll"] = dbus.service.method(
+			dbus.PROPERTIES_IFACE, in_signature='s', out_signature='a{sv}')(GetAll)
+
+	def get_property(self, method, property_name):
+		if not ismethod(method):
+			raise Exception("Only bound methods can be exported.")
+		if property_name in self._property_getters:
+			raise Exception("A getter for this property is already registered.")
+		self._property_getters[property_name] = method
+
+	def set_property(self, method, property_name):
+		if not ismethod(method):
+			raise Exception("Only bound methods can be exported.")
+		if property_name in self._property_setters:
+			raise Exception("A setter for this property is already registered.")
+		self._property_setters[property_name] = method
 
 	@property
 	def bus_name(self):
