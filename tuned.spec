@@ -44,10 +44,11 @@
 
 Summary: A dynamic adaptive system tuning daemon
 Name: tuned
-Version: 2.22.0
+Version: 2.22.0.ublue.{{{ git_dir_version }}}
 Release: 0.1%{?prerel1}%{?with_snapshot:.%{git_suffix}}%{?dist}
 License: GPL-2.0-or-later AND CC-BY-SA-3.0
-Source0: https://github.com/redhat-performance/%{name}/archive/v%{version}%{?prerel2}/%{name}-%{version}%{?prerel2}.tar.gz
+VCS:     {{{ git_dir_vcs }}}
+Source:  {{{ git_dir_pack }}}
 URL: http://www.tuned-project.org/
 BuildArch: noarch
 BuildRequires: systemd, desktop-file-utils
@@ -276,7 +277,7 @@ An API translation daemon that allows applications to easily transition
 to TuneD from power-profiles-daemon (PPD).
 
 %prep
-%autosetup -p1 -n %{name}-%{version}%{?prerel2}
+{{{ git_dir_setup_macro }}}
 
 %build
 # Docs cannot be generated on RHEL now due to missing asciidoctor dependency
