@@ -36,8 +36,8 @@
 %global git_suffix %{git_date}git%{git_short_commit}
 %endif
 
-%global prerelease rc
-%global prereleasenum 1
+#%%global prerelease rc
+#%%global prereleasenum 1
 
 %global prerel1 %{?prerelease:.%{prerelease}%{prereleasenum}}
 %global prerel2 %{?prerelease:-%{prerelease}.%{prereleasenum}}
@@ -45,7 +45,7 @@
 Summary: A dynamic adaptive system tuning daemon
 Name: tuned
 Version: 2.22.0.ublue.{{{ git_dir_version }}}
-Release: 0.1%{?prerel1}%{?with_snapshot:.%{git_suffix}}%{?dist}
+Release: 1%{?prerel1}%{?with_snapshot:.%{git_suffix}}%{?dist}
 License: GPL-2.0-or-later AND CC-BY-SA-3.0
 VCS:     {{{ git_dir_vcs }}}
 Source:  {{{ git_dir_pack }}}
@@ -578,6 +578,11 @@ fi
 %config(noreplace) %{_sysconfdir}/tuned/ppd.conf
 
 %changelog
+* Fri Feb 16 2024 Jaroslav Škarvada <jskarvad@redhat.com> - 2.22.0-1
+- new release
+  - rebased tuned to latest upstream
+    related: RHEL-17121
+
 * Fri Feb  9 2024 Jaroslav Škarvada <jskarvad@redhat.com> - 2.22.0-0.1.rc1
 - new release
   - rebased tuned to latest upstream
