@@ -44,7 +44,7 @@
 
 Summary: A dynamic adaptive system tuning daemon
 Name: tuned
-Version: 2.22.0.ublue.{{{ git_dir_version }}}
+Version: 2.22.1.ublue.{{{ git_dir_version }}}
 Release: 1%{?prerel1}%{?with_snapshot:.%{git_suffix}}%{?dist}
 License: GPL-2.0-or-later AND CC-BY-SA-3.0
 VCS:     {{{ git_dir_vcs }}}
@@ -575,6 +575,14 @@ fi
 %config(noreplace) %{_sysconfdir}/tuned/ppd.conf
 
 %changelog
+* Thu Feb 22 2024 Jaroslav Škarvada <jskarvad@redhat.com> - 2.22.1-1
+- new release
+  - rebased tuned to latest upstream
+    related: RHEL-17121
+  - renamed intel_uncore plugin to uncore
+  - network-throughput: increased net.ipv4.tcp_rmem default value
+    resolves: RHEL-25847
+
 * Fri Feb 16 2024 Jaroslav Škarvada <jskarvad@redhat.com> - 2.22.0-1
 - new release
   - rebased tuned to latest upstream
