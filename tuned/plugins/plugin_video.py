@@ -119,13 +119,13 @@ class VideoPlugin(base.Plugin):
 	def apply_panel_power_saving_target(self, device, sim=False):
 		"""Apply the target value to the panel_power_savings file if it doesn't already have it"""
 
+		# if we don't have the file, we might be radeon not amdgpu
+		if not os.path.exists(self._files(device)["panel_power_savings"]):
+			return None
+
 		# if we don't have a proxy, we can't tell if we're on battery
 		if not self.proxy:
 			self.setup_battery_signaling()
-			return None
-
-		# if we don't have the file, we might be radeon not amdgpu
-		if not os.path.exists(self._files(device)["panel_power_savings"]):
 			return None
 
 		# determine value to use (only apply if on battery, otherwise set to 0)
