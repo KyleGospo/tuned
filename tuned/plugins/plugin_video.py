@@ -218,5 +218,8 @@ class VideoPlugin(base.Plugin):
 	@command_get("panel_power_savings")
 	def _get_panel_power_savings(self, device, ignore_missing=False):
 		"""Get the current panel_power_savings value"""
+		if not os.path.exists(self._files(device)["panel_power_savings"]):
+			log.debug("panel_power_savings is not supported on '%s'" % device)
+			return None
 		fname = self._files(device)["panel_power_savings"]
 		return self._cmd.read_file(fname, no_error=ignore_missing).strip()
